@@ -1,12 +1,124 @@
 <template>
   <div class="container">
+  <div class="row">
+    <div class="col-12">
+      <card>
+        <template slot="header">
+          <div class="row">
+            <div class="col-sm-6">
+              <h2 class="card-title">Stakers Explorer</h2>
+            </div>
+          </div>
+        </template>
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-lg-7 col-md-12 ml-lg-auto mr-lg-0">
+              <input
+                ref="stakerAddressInput"
+                class="form-control w-100"
+                type="search"
+                placeholder="Insert staker address"
+                aria-label="Search"
+            >
+            </div>
+            <div class="col-lg-4 col-md-12 text-center col-md-auto mr-lg-auto ml-lg-0">
+              <button v-on:click="viewStakerStatistics" class="btn btn-success my-2 my-sm-0">View statistics</button>
+            </div>
+          </div>
+        </div>
+      </card>
+    </div>
+  </div>
+<!-- BEGIN TOP ROW --------------------------------------------------------- -->
+  <div class="row">
+
+
+  <!-- Issued rewards card START -->
+  <div class="col-lg-3 col-md-6 col-sm-12">
+    <card type="chart">
+      <template slot="header">
+        <div class="row">
+          <div class="col-sm-12">
+            <h5 class="card-category">In staking</h5>
+            <h2 class="card-title">{{ globalStatistics.totStaked }} QDTs</h2>
+          </div>
+        </div>
+      </template>
+    </card>
+  </div>
+  <!-- Issued rewards card END -->
+
+    <!-- Avg. staked amount card START -->
+  <div class="col-lg-3 col-md-6 col-sm-12">
+      <card type="chart">
+        <template slot="header">
+          <div class="row">
+            <div class="col-sm-12">
+              <h5 class="card-category">Stakers</h5>
+              <h2 class="card-title">{{globalStatistics.totStakers}}</h2>
+            </div>
+          </div>
+        </template>
+      </card>
+    </div>
+    <!-- Staked tokens card END -->
+
+
+    <!-- Unclaimed rewards card START -->
+  <div class="col-lg-3 col-md-6 col-sm-12">
+      <card type="chart">
+        <template slot="header">
+          <div class="row">
+            <div class="col-sm-12">
+              <h5 class="card-category">Unclaimed rewards</h5>
+              <h2 class="card-title">{{ globalStatistics.totUnclaimed }} QDTs</h2>
+            </div>
+          </div>
+        </template>
+      </card>
+    </div>
+    <!-- Unclaimed rewards card END -->
+
+
+    <!-- Active stakeholders card START -->
+  <div class="col-lg-3 col-md-6 col-sm-12">
+      <card type="chart">
+        <template slot="header">
+          <div class="row">
+              <div class="col-sm-12">
+                <h5 class="card-category">Issued rewards</h5>
+                <h2 class="card-title">{{globalStatistics.totIssued}} QDTs</h2>
+              </div>
+            </div>
+        </template>
+      </card>
+    </div>
+    <!-- Active stakeholders card END -->
+  </div>
+
+<!-- END TOP ROW ----------------------------------------------------------- -->
     <div class="row">
-      <div class="col-4">
+    <div class="col-lg-8 col-md-12 col-sm-12">
+      <card type="chart">
+        <template slot="header">
+          <div class="row">
+            <div class="col-sm-6">
+              <h2 class="card-title">Staked Tokens</h2>
+            </div>
+          </div>
+        </template>
+        <div class="chart-area">
+          <staked-volume-by-month :positions="allPositions">
+          </staked-volume-by-month>
+        </div>
+      </card>
+    </div>
+      <div class="col-lg-4 col-md-12">
         <card type="chart">
           <template slot="header">
           <div class="row">
             <div class="col-12 mt-1">
-              <h2 class="card-title">Join the staking!</h2>
+              <h2 class="card-title">Rewards Calculator</h2>
             </div>
           </div>
           <div class="row">
@@ -28,304 +140,86 @@
               <h5 class="card-category"> Staking period : <b>100 days</b></h5>
               <h5 class="card-category"> Est. rewards : <b>1400 QDT</b></h5>
             </div>
-            <div class="col-auto mr-auto ml-auto mb-2 mt-1">
-              <a class="btn btn-primary">Stake now!</a>
-            </div>
-          </div>
-          </template>
-        </card>
-      </div>
-      <div class="col-8">
-        <card type="chart">
-          <template slot="header">
-            <div class="row">
-              <div class="col-sm-6" :class="isRTL ? 'text-right' : 'text-left'">
-                <h5 class="card-category"></h5>
-                <h2 class="card-title">Staking Pool Size</h2>
-              </div>
-              <div class="col-sm-6">
-                <div class="btn-group btn-group-toggle"
-                     :class="isRTL ? 'float-left' : 'float-right'"
-                     data-toggle="buttons">
-                  <label v-for="(option, index) in bigLineChartCategories"
-                         :key="option"
-                         class="btn btn-sm btn-primary btn-simple"
-                         :class="{active: bigLineChart.activeIndex === index}"
-                         :id="index">
-                    <input type="radio"
-                           @click="initBigChart(index)"
-                           name="options" autocomplete="off"
-                           :checked="bigLineChart.activeIndex === index">
-                    {{option}}
-                  </label>
-                </div>
-              </div>
+            <div class="col-12 text-center mb-2">
+              <a class="btn btn-primary" style="padding:11px 20px; margin-right:8px" href="https://staking.quadrans.io">
+                Go to staking!
+              </a>
+              <a class="btn btn-outline-primary" style="padding:11px 20px;" href="https://staking.quadrans.io">
+                Discover more
+              </a>
 
             </div>
-          </template>
-          <div class="chart-area">
-            <line-chart style="height: 100%"
-                        ref="bigChart"
-                        chart-id="big-line-chart"
-                        :chart-data="bigLineChart.chartData"
-                        :gradient-colors="bigLineChart.gradientColors"
-                        :gradient-stops="bigLineChart.gradientStops"
-                        :extra-options="bigLineChart.extraOptions">
-            </line-chart>
           </div>
+          </template>
         </card>
       </div>
+
     </div>
     <div class="row">
-      <div class="col-lg-4" :class="{'text-right': isRTL}">
+      <div class="col-lg-6">
         <card type="chart">
           <template slot="header">
-            <h5 class="card-category">Staked Tokens</h5>
-            <h3 class="card-title">
-              <i class="tim-icons icon-bell-55 text-primary "></i>
-                {{ totalStakedTokens }} QDTs</h3>
+            <h2 class="card-title">Active Stakers</h2>
           </template>
           <div class="chart-area">
-            <line-chart style="height: 100%"
-                        chart-id="purple-line-chart"
-                        :chart-data="purpleLineChart.chartData"
-                        :gradient-colors="purpleLineChart.gradientColors"
-                        :gradient-stops="purpleLineChart.gradientStops"
-                        :extra-options="purpleLineChart.extraOptions">
-            </line-chart>
+            <stakers-by-month :positions="allPositions" ref="activeStakersChart">
+            </stakers-by-month>
           </div>
         </card>
       </div>
-      <div class="col-lg-4" :class="{'text-right': isRTL}">
+      <div class="col-lg-6">
         <card type="chart">
           <template slot="header">
-            <h5 class="card-category">Active Stakers</h5>
-            <h3 class="card-title"><i class="tim-icons icon-delivery-fast text-info "></i>
-            {{activeStakersCount}} </h3>
+            <h2 class="card-title">Issued Rewards</h2>
           </template>
           <div class="chart-area">
-            <bar-chart style="height: 100%"
-                       chart-id="blue-bar-chart"
-                       :chart-data="blueBarChart.chartData"
-                       :gradient-stops="blueBarChart.gradientStops"
-                       :extra-options="blueBarChart.extraOptions">
-            </bar-chart>
-          </div>
-        </card>
-      </div>
-      <div class="col-lg-4" :class="{'text-right': isRTL}">
-        <card type="chart">
-          <template slot="header">
-            <h5 class="card-category">Issued Rewards</h5>
-            <h3 class="card-title"><i class="tim-icons icon-send text-success "></i>
-            {{ issuedRewards }} QDTs</h3>
-          </template>
-          <div class="chart-area">
-            <line-chart style="height: 100%"
-                        chart-id="green-line-chart"
-                        :chart-data="greenLineChart.chartData"
-                        :gradient-stops="greenLineChart.gradientStops"
-                        :extra-options="greenLineChart.extraOptions">
-            </line-chart>
+            <issued-rewards-by-month :positions="allPositions">
+            </issued-rewards-by-month>
           </div>
         </card>
       </div>
     </div>
 
-    <div class="row">
-      <!-- Avg. staked amount card START -->
-      <div class="col-3">
-        <card type="chart">
-          <template slot="header">
-            <div class="row">
-              <div class="col-sm-12" :class="isRTL ? 'text-right' : 'text-left'">
-                <h5 class="card-category">Average Staked Amount</h5>
-                <h2 class="card-title">1.75M QDTs</h2>
-              </div>
-            </div>
-          </template>
-        </card>
-      </div>
-      <!-- Staked tokens card END -->
-
-
-      <!-- Unclaimed rewards card START -->
-      <div class="col-3">
-        <card type="chart">
-          <template slot="header">
-            <div class="row">
-              <div class="col-sm-12" :class="isRTL ? 'text-right' : 'text-left'">
-                <h5 class="card-category">Unclaimed rewards</h5>
-                <h2 class="card-title">1.75M QDTs</h2>
-              </div>
-            </div>
-          </template>
-        </card>
-      </div>
-      <!-- Unclaimed rewards card END -->
-      <!-- Issued rewards card START -->
-      <div class="col-3">
-        <card type="chart">
-          <template slot="header">
-            <div class="row">
-              <div class="col-sm-12" :class="isRTL ? 'text-right' : 'text-left'">
-                <h5 class="card-category">Average Interest Days</h5>
-                <h2 class="card-title">90 days</h2>
-              </div>
-            </div>
-          </template>
-        </card>
-      </div>
-      <!-- Issued rewards card END -->
-
-
-      <!-- Active stakeholders card START -->
-      <div class="col-3">
-        <card type="chart">
-          <template slot="header">
-            <div class="row">
-                <div class="col-sm-12" :class="isRTL ? 'text-right' : 'text-left'">
-                  <h5 class="card-category">Staking Pool Age</h5>
-                  <h2 class="card-title">300 days </h2>
-                </div>
-              </div>
-          </template>
-        </card>
-      </div>
-      <!-- Active stakeholders card END -->
-    </div>
 
     <div class="row">
       <div class="col-12">
-        <card class="card" :header-classes="{'text-right': isRTL}">
-          <h4 slot="header" class="card-title">Top Stakers</h4>
-          <div class="table-responsive" style="overflow:hidden;">
-          <table class="table tablesorter">
-            <thead class="text-primary">
-
-              <td>Staker address</td>
-              <td>Staked amount</td>
-              <td>Interest days</td>
-              <td>Accured interests</td>
-            </thead>
-            <tbody>
-              <tr v-for="staker in activeStakers" >
-                <td>{{staker[0]}}</a></td>
-                <td>{{fancyQDTAmountFormatter(staker[1])}}</td>
-                <td>{{staker[2].toFixed(2)}}</td>
-                <td>{{fancyQDTAmountFormatter(staker[3])}}</td>
-              </tr>
-            </tbody>
-          </table>
-          </div>
+        <card class="card">
+          <h2 slot="header" class="card-title">Top 10 Stakers</h2>
+          <active-stakers-list :activeStakers="activeStakers">
+          </active-stakers-list>
         </card>
       </div>
     </div>
   </div>
 </template>
 <script>
-  import LineChart from '@/components/Charts/LineChart';
-  import BarChart from '@/components/Charts/BarChart';
-  import * as chartConfigs from '@/components/Charts/config';
-  import TaskList from './Dashboard/TaskList';
-  import UserTable from './Dashboard/UserTable';
   import config from '@/config';
+  import router from '@/router/index';
   import axios from 'axios';
+  import fancyFormatter from '@/plugins/fancyFormatter'
+  import StakersByMonth from './Dashboard/StakersByMonth'
+  import StakedVolumeByMonth from './Dashboard/StakedVolumeByMonth'
+  import IssuedRewardsByMonth from './Dashboard/IssuedRewardsByMonth'
+  import ActiveStakersList from './Dashboard/ActiveStakersList'
+
 
   export default {
     components: {
-      LineChart,
-      BarChart,
-      TaskList,
-      UserTable
+      StakersByMonth,
+      StakedVolumeByMonth,
+      IssuedRewardsByMonth,
+      ActiveStakersList
     },
     data() {
       return {
-        totalStakedTokens : 0,
-        activeStakers : [],
-        activeStakersCount : 0,
-        issuedRewards : 0,
-        bigLineChart: {
-          allData: [
-            [100, 70, 90, 70, 85, 60, 75, 60, 90, 80, 110, 100],
-            [80, 120, 105, 110, 95, 105, 90, 100, 80, 95, 70, 120],
-            [60, 80, 65, 130, 80, 105, 90, 130, 70, 115, 60, 130]
-          ],
-          activeIndex: 0,
-          chartData: {
-            datasets: [{ }],
-            labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
-          },
-          extraOptions: chartConfigs.purpleChartOptions,
-          gradientColors: config.colors.primaryGradient,
-          gradientStops: [1, 0.4, 0],
-          categories: []
+        allPositions: [],
+        globalStatistics : {
+          totStakers : 0,
+          totStaked: 0,
+          totUnclaimed: 0,
+          totIssued: 0
         },
-        purpleLineChart: {
-          extraOptions: chartConfigs.purpleChartOptions,
-          chartData: {
-            labels: ['JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
-            datasets: [{
-              label: "Data",
-              fill: true,
-              borderColor: config.colors.primary,
-              borderWidth: 2,
-              borderDash: [],
-              borderDashOffset: 0.0,
-              pointBackgroundColor: config.colors.primary,
-              pointBorderColor: 'rgba(255,255,255,0)',
-              pointHoverBackgroundColor: config.colors.primary,
-              pointBorderWidth: 20,
-              pointHoverRadius: 4,
-              pointHoverBorderWidth: 15,
-              pointRadius: 4,
-              data: [80, 100, 70, 80, 120, 80],
-            }]
-          },
-          gradientColors: config.colors.primaryGradient,
-          gradientStops: [1, 0.2, 0],
-        },
-        greenLineChart: {
-          extraOptions: chartConfigs.greenChartOptions,
-          chartData: {
-            labels: ['JUL', 'AUG', 'SEP', 'OCT', 'NOV'],
-            datasets: [{
-              label: "My First dataset",
-              fill: true,
-              borderColor: config.colors.danger,
-              borderWidth: 2,
-              borderDash: [],
-              borderDashOffset: 0.0,
-              pointBackgroundColor: config.colors.danger,
-              pointBorderColor: 'rgba(255,255,255,0)',
-              pointHoverBackgroundColor: config.colors.danger,
-              pointBorderWidth: 20,
-              pointHoverRadius: 4,
-              pointHoverBorderWidth: 15,
-              pointRadius: 4,
-              data: [90, 27, 60, 12, 80],
-            }]
-          },
-          gradientColors: ['rgba(66,134,121,0.15)', 'rgba(66,134,121,0.0)', 'rgba(66,134,121,0)'],
-          gradientStops: [1, 0.4, 0],
-        },
-        blueBarChart: {
-          extraOptions: chartConfigs.barChartOptions,
-          chartData: {
-            labels: ['USA', 'GER', 'AUS', 'UK', 'RO', 'BR'],
-            datasets: [{
-              label: "Countries",
-              fill: true,
-              borderColor: config.colors.info,
-              borderWidth: 2,
-              borderDash: [],
-              borderDashOffset: 0.0,
-              data: [53, 20, 10, 80, 100, 45],
-            }]
-          },
-          gradientColors: config.colors.primaryGradient,
-          gradientStops: [1, 0.4, 0],
-        }
+        activeStakers : []
       }
     },
     computed: {
@@ -335,108 +229,52 @@
       isRTL() {
         return this.$rtl.isRTL;
       },
-      bigLineChartCategories() {
-        return this.$t('dashboard.chartCategories');
-      }
     },
     methods: {
-      fancyQDTAmountFormatter(qdtAmount) {
-        if(qdtAmount>=0 && qdtAmount<999)
-        {
-          return qdtAmount.toFixed(2)+'';
-        } else if(qdtAmount>=1000 && qdtAmount<999999)
-        {
-          return (qdtAmount/1000).toFixed(2)+'k';
-        } else if(qdtAmount>=1000000 && qdtAmount<999999999)
-        {
-          return (qdtAmount/1000000).toFixed(2)+'M';
-        } else if(qdtAmount>=1000000000 && qdtAmount<999999999999)
-        {
-          return (qdtAmount/1000000).toFixed(2)+'B';
-        } else
-        {
-          return qdtAmount.toFixed(2)+'';
-        }
-      },
-      getTotalStakedTokens() {
-        const path = "http://127.0.0.1:5000/api/v1/totalStakedTokens";
+      getGlobalStatistics() {
+        const path = config.QDTMonitorApiBasePath+"v1/getGlobalStatistics"
         axios.get(path)
+          .catch((err) => { console.log(err) } )
           .then( (res) => {
-              this.totalStakedTokens = this.fancyQDTAmountFormatter(res.data.inStakingQDTs);
-          } )
-          .catch( (error) => { console.log(error) } );
+            this.globalStatistics=res.data
+            this.globalStatistics.totStaked=fancyFormatter.QDTAmount(res.data.totStaked)
+            this.globalStatistics.totUnclaimed=fancyFormatter.QDTAmount(res.data.totUnclaimed)
+            this.globalStatistics.totIssued=fancyFormatter.QDTAmount(res.data.totIssued)
+          })
       },
       getActiveStakers() {
-        const path = "http://127.0.0.1:5000/api/v1/activeStakers";
+        const path = config.QDTMonitorApiBasePath+"v1/getActiveStakers?limit=10"
         axios.get(path)
-          .then( (res => {
-            this.activeStakers = res.data.activeStakers;
-            this.activeStakersCount = this.activeStakers.length;
-          } ))
-          .catch( (error) => console.log(error) );
-      },
-      getIssuedRewards() {
-      const path = "http://127.0.0.1:5000/api/v1/issuedRewards";
-      axios.get(path)
-        .then( (res => {
-          this.issuedRewards = this.fancyQDTAmountFormatter(res.data.issuedRewards);
-        } ))
-        .catch( (error) => console.log(error) );
-      },
-      getPoolSize() {
-        const path="http://127.0.0.1:5000/api/v1/poolSizeWithinTimePeriod";
-        axios.get(path)
-        .then((res) => {
-
-          let chartData = {
-            datasets: [{
-              fill: true,
-              borderColor: config.colors.primary,
-              borderWidth: 2,
-              borderDash: [],
-              borderDashOffset: 0.0,
-              pointBackgroundColor: config.colors.primary,
-              pointBorderColor: 'rgba(255,255,255,0)',
-              pointHoverBackgroundColor: config.colors.primary,
-              pointBorderWidth: 20,
-              pointHoverRadius: 4,
-              pointHoverBorderWidth: 15,
-              pointRadius: 4,
-              data: res.data.poolSize,
-            }],
-            labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
-          }
-          this.$refs.bigChart.updateGradients(chartData);
-          this.bigLineChart.chartData = chartData;
-          this.bigLineChart.activeIndex = index;
+        .catch((err) => console.log(err))
+        .then( (res) => {
+          console.log(res.data)
+          this.activeStakers = res.data
         })
       },
-      initBigChart(index) {
-        let chartData = {
-          datasets: [{
-            fill: true,
-            borderColor: config.colors.primary,
-            borderWidth: 2,
-            borderDash: [],
-            borderDashOffset: 0.0,
-            pointBackgroundColor: config.colors.primary,
-            pointBorderColor: 'rgba(255,255,255,0)',
-            pointHoverBackgroundColor: config.colors.primary,
-            pointBorderWidth: 20,
-            pointHoverRadius: 4,
-            pointHoverBorderWidth: 15,
-            pointRadius: 4,
-            data: this.bigLineChart.allData[index]
-          }],
-          labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
+      getAllStakingPositions() {
+        const path = config.QDTMonitorApiBasePath+"v1/getAllStakingPositions"
+        axios.get(path)
+        .catch((err) => console.log(err))
+        .then( (res) => {
+          this.allPositions = res.data
+        })
+      },
+      viewStakerStatistics(event) {
+        let staker=this.$refs.stakerAddressInput.value
+        console.log("Called: "+staker)
+        if(staker!=="")
+        {
+          router.push({
+            path:'profile/'+staker,
+          }).catch(()=>{})
         }
-        this.$refs.bigChart.updateGradients(chartData);
-        this.bigLineChart.chartData = chartData;
-        this.bigLineChart.activeIndex = index;
-      }
+        event.preventDefault()
+      },
     },
     created() {
-
+      this.getGlobalStatistics()
+      this.getActiveStakers()
+      this.getAllStakingPositions()
     },
     mounted() {
       this.i18n = this.$i18n;
@@ -444,11 +282,6 @@
         this.i18n.locale = 'ar';
         this.$rtl.enableRTL();
       }
-      this.getTotalStakedTokens();
-      this.getActiveStakers();
-      this.getIssuedRewards();
-      this.getPoolSize();
-      //this.initBigChart(0);
 
     },
     beforeDestroy() {

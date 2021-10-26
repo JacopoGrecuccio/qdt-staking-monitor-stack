@@ -6,8 +6,10 @@ import RTLPlugin from "./RTLPlugin";
 
 //css assets
 import "@/assets/sass/black-dashboard.scss";
+//import "@/assets/css/bootstrap.min.css";
+import "@/assets/css/quadrans_style.css";
 import "@/assets/css/nucleo-icons.css";
-import "@/assets/demo/demo.css";
+//import "@/assets/demo/demo.css";
 
 export default {
   install(Vue) {

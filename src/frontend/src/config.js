@@ -1,3 +1,6 @@
+
+const QDTMonitorApiBasePath = "https://fbhnx8nzri.execute-api.us-east-2.amazonaws.com/"
+
 export default {
   colors: {
     default: "#344675",
@@ -6,5 +9,6 @@ export default {
     danger: "#fd5d93",
     teal: "#00d6b4",
     primaryGradient: ['rgba(76, 211, 150, 0.1)', 'rgba(53, 183, 125, 0)', 'rgba(119,52,169,0)'],
-  }
+  },
+  QDTMonitorApiBasePath: QDTMonitorApiBasePath
 }

@@ -1,8 +1,8 @@
-import { Bar, mixins } from 'vue-chartjs';
+import { Pie, mixins } from 'vue-chartjs';
 
 export default {
-  name: 'bar-chart',
-  extends: Bar,
+  name: 'pie-chart',
+  extends: Pie,
   mixins: [mixins.reactiveProp],
   props: {
     extraOptions: Object,
@@ -41,14 +41,17 @@ export default {
     }
   },
   mounted() {
+    //console.log(this)
     this.$watch('chartData', (newVal, oldVal) => {
-      //this.updateGradients(newVal);
+    //this.updateGradients(newVal);
       if (!oldVal) {
-        this.renderChart(
-          this.chartData,
-          this.extraOptions
-        );
+          this.renderChart(
+            this.chartData,
+            this.extraOptions
+          );
       }
     }, { immediate: true });
+  },
+  created() {
   }
 };

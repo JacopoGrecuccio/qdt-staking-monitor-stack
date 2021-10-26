@@ -162,7 +162,7 @@
 
   .card:not(.card-white){
     background: $white;
-    box-shadow: 0 1px 15px 0 rgba(123, 123, 123, 0.05);
+    box-shadow: 0 1px 15px 0 rgba(123, 123, 123, 0.16);
     .card-header{
       color: $black;
       a[data-toggle="collapse"]{
@@ -278,14 +278,14 @@
      .description{
        color: $dark-gray;
      }
-
+     /*
      .footer ul li a{
        color: $black-states;
      }
 
      .footer .copyright{
        color: $black-states;
-     }
+     }*/
    }
 
    .nav-pills .nav-item .nav-link:not(.active){

@@ -5,11 +5,12 @@ import NotFound from "@/pages/NotFoundPage.vue";
 // Admin pages
 const Dashboard = () => import(/* webpackChunkName: "dashboard" */"@/pages/Dashboard.vue");
 const Profile = () => import(/* webpackChunkName: "common" */ "@/pages/Profile.vue");
-const Notifications = () => import(/* webpackChunkName: "common" */"@/pages/Notifications.vue");
-const Icons = () => import(/* webpackChunkName: "common" */ "@/pages/Icons.vue");
-const Maps = () => import(/* webpackChunkName: "common" */ "@/pages/Maps.vue");
-const Typography = () => import(/* webpackChunkName: "common" */ "@/pages/Typography.vue");
-const TableList = () => import(/* webpackChunkName: "common" */ "@/pages/TableList.vue");
+
+//const Notifications = () => import(/* webpackChunkName: "common" */"@/pages/Notifications.vue");
+//const Icons = () => import(/* webpackChunkName: "common" */ "@/pages/Icons.vue");
+//const Maps = () => import(/* webpackChunkName: "common" */ "@/pages/Maps.vue");
+//const Typography = () => import(/* webpackChunkName: "common" */ "@/pages/Typography.vue");
+//const TableList = () => import(/* webpackChunkName: "common" */ "@/pages/TableList.vue");
 
 const routes = [
   {
@@ -23,10 +24,11 @@ const routes = [
         component: Dashboard
       },
       {
-        path: "profile",
+        path: "profile/:stakerAddress",
         name: "profile",
         component: Profile
-      },
+      }
+      /*
       {
         path: "notifications",
         name: "notifications",
@@ -52,6 +54,7 @@ const routes = [
         name: "table-list",
         component: TableList
       }
+      */
     ]
   },
   { path: "*", component: NotFound },

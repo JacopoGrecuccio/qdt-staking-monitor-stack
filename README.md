@@ -65,12 +65,13 @@ npm run build
 Once the frontend is built, we need to sync the `src/frontend/dist` directory with the S3 bucket that holds the static website:
 
 ```bash
-aws-cli s3 sync <BUCKET_ARN>  
+aws --region <YOUR_AWS_REGION> --profile <YOUR_AWS_CLI_PROFILE> s3 sync ./dist s3://<YOUR_BUCKET_NAME> --delete
 ```
 
 ##  TODO
 
 - Style and fix styling bugs in frontend application
 - Define API call limits: max N requests per minute from the same IP
+- Reward calculator tool
 
 ## Changelog

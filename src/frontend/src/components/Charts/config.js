@@ -1,3 +1,4 @@
+import fancyFormatter from '@/plugins/fancyFormatter'
 
 export const basicOptions = {
   maintainAspectRatio: false,
@@ -159,7 +160,10 @@ export let greenChartOptions = {
         suggestedMin: 50,
         suggestedMax: 125,
         padding: 20,
-        fontColor: "#9e9e9e"
+        fontColor: "#9e9e9e",
+        callback: (value,index,values) => {
+          console.log(value);
+          return fancyFormatter.QDTAmount(value*(10**18)); }
       }
     }],
 
@@ -199,7 +203,7 @@ export let barChartOptions = {
         zeroLineColor: "transparent",
       },
       ticks: {
-        suggestedMin: 60,
+        suggestedMin: 0,
         suggestedMax: 120,
         padding: 20,
         fontColor: "#9e9e9e"

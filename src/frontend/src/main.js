@@ -21,6 +21,12 @@ import router from "./router/index";
 import BlackDashboard from "./plugins/blackDashboard";
 import i18n from "./i18n"
 import './registerServiceWorker'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+import VueDataTables from 'vue-data-tables'
+Vue.use(ElementUI)
+
+Vue.use(VueDataTables)
 Vue.use(BlackDashboard);
 Vue.use(VueRouter);
 Vue.use(RouterPrefetch);
