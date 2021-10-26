@@ -9,6 +9,8 @@ build.toml
 buildspec.yml
 samconfig.toml
 
+# Template with owner's settings
+template.yml
 #-------------------------------------------------------------------------------
 # FRONTEND SPECIFIC IGNORES
 #-------------------------------------------------------------------------------

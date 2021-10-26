@@ -1,0 +1,139 @@
+#-------------------------------------------------------------------------------
+# Application Stack: qdt-staking-monitor-stack
+#
+# Description:
+#
+# Date: Oct 2021
+# Version: 1.0
+# Author: Jacopo Grecuccio
+# Organization: Quadrans Foundation
+#-------------------------------------------------------------------------------
+
+# This is the SAM template that represents the architecture of your serverless application
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template-basics.html
+
+# The AWSTemplateFormatVersion identifies the capabilities of the template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  qdt-staking-monitor-stack
+
+# Transform section specifies one or more macros that AWS CloudFormation uses to process your template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
+Transform:
+- AWS::Serverless-2016-10-31
+
+
+#-------------------------------------------------------------------------------
+# Global configurations
+#-------------------------------------------------------------------------------
+Globals:
+  HttpApi:
+    CorsConfiguration:
+      AllowOrigins: "'*'"
+      AllowMethods:
+        - GET
+
+#-------------------------------------------------------------------------------
+# Application's stack resources
+#-------------------------------------------------------------------------------
+Resources:
+
+  #-----------------------------------------------------------------------------
+  # Database schema
+  #-----------------------------------------------------------------------------
+  QDTStakingPositionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: qdt-staking-positions-table
+      AttributeDefinitions:
+        - AttributeName: stakerAddress
+          AttributeType: S
+        - AttributeName: openingTransaction
+          AttributeType: S
+      KeySchema:
+        - AttributeName: stakerAddress
+          KeyType: HASH
+        - AttributeName: openingTransaction
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  #-----------------------------------------------------------------------------
+  # Watcher's lambda function resource definition
+  # Trigger: Scheduled event
+  #-----------------------------------------------------------------------------
+  QDTStakingWatcherFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.startWatcher
+      Runtime: nodejs14.x
+      CodeUri: src/handlers/watcher
+      Timeout: 60
+      Environment:
+        Variables:
+          INFURA_URL: <YOUR_INFURA_URL>
+          INFURA_WS_URL: <YOUR_INFURA_WS_URL>
+      Events:
+        StartScheduledEvent:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 hour) # Change the schedule period to desired val
+      Policies:
+        - AmazonDynamoDBFullAccess
+
+  #-----------------------------------------------------------------------------
+  # REST API Handler Lamba function
+  #-----------------------------------------------------------------------------
+  QDTStakingMonitorApiHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: stakingMonitorApiHandler.handler
+      Runtime: nodejs14.x
+      CodeUri: src/handlers/api
+      Timeout: 60
+      Events:
+        GetGlobalStatisticsApi:
+          Type: HttpApi
+          Properties:
+            Path: /v1/getGlobalStatistics
+            Method: GET
+
+        GetActiveStakersApi:
+          Type: HttpApi
+          Properties:
+            Path: /v1/getActiveStakers
+            Method: GET
+
+        GetStakersStatisticsApi:
+          Type: HttpApi
+          Properties:
+            Path: /v1/getStakerStatistics
+            Method: GET
+
+        GetAllPositionsApi:
+          Type: HttpApi
+          Properties:
+            Path: /v1/getAllStakingPositions
+            Method: GET
+
+      Policies:
+        - AmazonDynamoDBFullAccess
+
+#-------------------------------------------------------------------------------
+# Deploy Outputs
+#-------------------------------------------------------------------------------
+Outputs:
+  ApiEndpointURL:
+      Description: "API getGlobalStatistics enpoint URL"
+      Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com"
+#    ApiGetGlobalStatisticsURL:
+#      Description: "API getGlobalStatistics enpoint URL"
+#      Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com${GetGlobalStatisticsApi.Path}"
+#    ApiGetActiveStakersURL:
+#      Description: "API getActiveStakers enpoint URL"
+#      Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com${GetActiveStakersApi.Path}"
+#    ApiGetStakerStatisticsURL:
+#      Description: "API getStakerStatistics enpoint URL"
+#      Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com${GetStakersStatisticsApi.Path}"
