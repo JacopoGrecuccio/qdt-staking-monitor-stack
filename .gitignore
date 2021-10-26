@@ -1,0 +1,42 @@
+#-------------------------------------------------------------------------------
+# TOP LEVEL IGNORES (SAM)
+#-------------------------------------------------------------------------------
+# Ignore AWS-SAM build directory
+.aws-sam/
+
+# Build and docker stuff
+build.toml
+buildspec.yml
+samconfig.toml
+
+#-------------------------------------------------------------------------------
+# FRONTEND SPECIFIC IGNORES
+#-------------------------------------------------------------------------------
+# Ignore node_modules
+src/frontend/node_modules/
+
+# Ignore Vue build directory
+src/frontend/dist
+
+#-------------------------------------------------------------------------------
+# REST API SPECIFIC IGNORES
+#-------------------------------------------------------------------------------
+
+# Ignore node_modules
+src/handlers/api/node_modules
+
+# Ignore npm package-lock file
+src/handlers/api/package-lock.json
+
+#-------------------------------------------------------------------------------
+# WATCHER SPECIFIC IGNORES
+#-------------------------------------------------------------------------------
+
+# Ignore node_modules
+src/handlers/watcher/node_modules
+
+# Ignore npm package-lock file
+src/handlers/watcher/package-lock.json
+
+# Ignore test environment file
+src/handlers/watcher/.env

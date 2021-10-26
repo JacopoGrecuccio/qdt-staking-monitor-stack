@@ -1,0 +1,14 @@
+{
+  "name": "qdt-staking-monitor-api",
+  "version": "1.0.0",
+  "description": "A REST api for accessing statistics about QDT staking activity",
+  "main": "stakingMonitorApiHandler.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "author": "Jacopo Grecuccio",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1006.0"
+  }
+}
